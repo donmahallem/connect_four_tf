@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+install:
+  - pip install numpy
+  - pip install Pillow
+  - pip install coverage
+  - pip install tensorflow
+  - pip install coveralls
+script:
+  - coverage run --source ./src -m unittest discover -s ./test -v
+after_success:
+  - coveralls
