@@ -22,7 +22,7 @@ class Field:
                 else:
                     return self._field, x, player_won, player
 
-    def turns(self):
+    def getTurns(self):
         return self._turns
 
     def setCoords(self, coords):

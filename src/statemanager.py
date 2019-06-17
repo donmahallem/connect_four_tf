@@ -1,5 +1,6 @@
 import os.path as osp
 from field import Field
+import pickle
 
 
 class StateManager:
@@ -31,9 +32,15 @@ def field_to_key(field):
 
 
 memory = dict()
+last_pickle = 0
+
+if osp.exists("filename.pickle"):
+    with open('filename.pickle', 'rb') as handle:
+        memory = pickle.load(handle)
 
 
 def take_turns(field, player, max_depth=None):
+    global last_pickle
     if not max_depth == None and max_depth == 0:
         return 0
     scores = []
@@ -54,9 +61,12 @@ def take_turns(field, player, max_depth=None):
                                None if max_depth == None else max_depth-1)
             memory[field_id] = score
         scores.append(score)
-    if field.getTurns() % 10 == 0:
+    if field.getTurns() % 10 == 0 and last_pickle+10000 < len(memory.keys()):
         print("Done with depth: "+str(field.getTurns()))
-    return sum(scores)/len(scores)
+        with open('filename.pickle', 'wb') as handle:
+            pickle.dump(memory, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        last_pickle = len(memory.keys())
+    return 0.8*sum(scores)/len(scores)
 
 
 for p in range(0, 2):
@@ -64,5 +74,5 @@ for p in range(0, 2):
         f = Field()
         f.put(t, 1 if p == 0 else -1)
         print(str(p)+" - "+str(t) + " res: " +
-              str(take_turns(f, -1 if p == 0 else 1, 8)))
+              str(take_turns(f, -1 if p == 0 else 1, None)))
         print(len(memory.keys()))
