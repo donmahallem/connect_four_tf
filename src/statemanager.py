@@ -33,8 +33,8 @@ def field_to_key(field):
 memory = dict()
 
 
-def take_turns(field, player, depth=None):
-    if not depth == None and depth == 0:
+def take_turns(field, player, max_depth=None):
+    if not max_depth == None and max_depth == 0:
         return 0
     scores = []
     for x in range(0, 7):
@@ -42,7 +42,7 @@ def take_turns(field, player, depth=None):
             continue
         field_copy = field.copy()
         _, _, done, x = field_copy.put(x, player)
-        field_id = id(field_to_key(field_copy))
+        field_id = field_to_key(field_copy)
         score = 0
         if field_id in memory:
             score = memory[field_id]
@@ -51,9 +51,11 @@ def take_turns(field, player, depth=None):
             memory[field_id] = score
         else:
             score = take_turns(field_copy, player*-1,
-                               None if depth == None else depth-1)
+                               None if max_depth == None else max_depth-1)
             memory[field_id] = score
         scores.append(score)
+    if field.getTurns() % 10 == 0:
+        print("Done with depth: "+str(field.getTurns()))
     return sum(scores)/len(scores)
 
 
