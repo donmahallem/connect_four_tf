@@ -3,15 +3,17 @@ import numpy as np
 
 class Field:
 
-    def __init__(self):
-        self._field = np.zeros((6, 7))
+    def __init__(self, f=np.zeros((6, 7), dtype=np.int8)):
+        self._field = f
 
     def put(self, x, player):
+        if self.isColumnFull(x):
+            return self._field, x, True, player*-1
         for y in range(self._field.shape[0]):
             if self._field[y, x] == 0:
                 self._field[y, x] = player
-                return self._field, x, self.isDoneFast(y, x, player)
-        raise Exception('column already full')
+                return self._field, x, self.isDoneFast(y, x, player), player
+        return self._field, x, True, player
 
     def setCoords(self, coords):
         self.coords = coords
@@ -55,3 +57,6 @@ class Field:
 
     def isColumnFull(self, x):
         return self._field[self._field.shape[0]-1, x] != 0
+
+    def copy(self):
+        return Field(np.copy(self._field))
