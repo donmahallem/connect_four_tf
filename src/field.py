@@ -3,20 +3,33 @@ import numpy as np
 
 class Field:
 
-    def __init__(self, f=np.zeros((6, 7), dtype=np.int8)):
+    def __init__(self, f=np.zeros((6, 7), dtype=np.int8), turns=0):
         self._field = f
+        self._turns = turns
 
     def put(self, x, player):
         if self.isColumnFull(x):
             return self._field, x, True, player*-1
+        self._turns += 1
         for y in range(self._field.shape[0]):
             if self._field[y, x] == 0:
                 self._field[y, x] = player
-                return self._field, x, self.isDoneFast(y, x, player), player
-        return self._field, x, True, player
+                player_won = self.isDoneFast(y, x, player)
+                if player_won:
+                    return self._field, x, player_won, player
+                elif self._turns >= 6*7:
+                    return self._field, x, True, 0.5
+                else:
+                    return self._field, x, player_won, player
+
+    def turns(self):
+        return self._turns
 
     def setCoords(self, coords):
         self.coords = coords
+
+    def reset(self):
+        self._field = np.zeros(self._field.shape)
 
     def isDoneFast(self, y, x, player):
         min_x = max(0, x-3)
@@ -59,4 +72,4 @@ class Field:
         return self._field[self._field.shape[0]-1, x] != 0
 
     def copy(self):
-        return Field(np.copy(self._field))
+        return Field(np.copy(self._field), self._turns)

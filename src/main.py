@@ -42,7 +42,7 @@ class Game:
 
         return old_state, old_state_Q_values
 
-    def minimax(self,field, player, depth=5):
+    def minimax(self, field, player, depth=5):
         if depth == 0:
             return evaluate(position)
         bestScore = -100000000
