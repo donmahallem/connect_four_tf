@@ -4,7 +4,7 @@ src/**/__pycache__/
 test/**/__pycache__/
 *.py[cod]
 *$py.class
-
+filename.pickle
 # C extensions
 *.so
 

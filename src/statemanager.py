@@ -1,6 +1,7 @@
 import os.path as osp
 from field import Field
 import pickle
+import numpy as np
 
 
 class StateManager:
@@ -50,9 +51,12 @@ def take_turns(field, player, max_depth=None):
         field_copy = field.copy()
         _, _, done, x = field_copy.put(x, player)
         field_id = field_to_key(field_copy)
+        field_id2 = field_to_key(np.flip(field_copy, 1))
         score = 0
         if field_id in memory:
             score = memory[field_id]
+        elif field_id2 in memory:
+            score = memory[field_id2]
         elif done:
             score = x
             memory[field_id] = score
