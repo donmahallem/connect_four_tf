@@ -33,7 +33,22 @@ def field_to_key(field):
     return ret
 
 
-memory = []
+class Memory:
+    def __init__(self, limit=100000):
+        self.memory = []
+        self.limit = limit
+
+    def add(self, data):
+        self.memory.append(data)
+        overhead = len(self.memory)-self.limit
+        if overhead > 0:
+            self.memory = self.memory[overhead:]
+
+    def count(self):
+        return len(self.memory)
+
+
+mem = Memory()
 
 exploration_rate = 0.2
 net = QNet()
@@ -52,12 +67,16 @@ def take_turns(field, player, max_depth=None):
         predictions = net.predict(np_field)[0]
         take_turn = np.argmax(predictions)
     _, _, done, reward = field.put(take_turn, player)
-    memory.append((old_field, take_turn, reward, field.getField())
-    if done:
+    mem.add((old_field, take_turn, reward, field.getField()))
+    if done == True:
         return player
     else:
         return take_turns(field, player*-1)
 
+
 for p in range(0, 2):
-    f=Field()
+    f = Field()
     print(take_turns(f, 1))
+
+
+print(mem.count())
